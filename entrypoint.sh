@@ -76,6 +76,13 @@ else
   export SUBSPACE_DISABLE_DNS=0
 fi
 
+# DNS server is disabled if the flag is not ommited and set to anything other than 0.
+if ! [ -z "${SUBSPACE_DISABLE_DNS_SERVER-}" ] && [ "${SUBSPACE_DISABLE_DNS_SERVER}" != "0" ]; then
+  export SUBSPACE_DISABLE_DNS_SERVER=1
+else
+  export SUBSPACE_DISABLE_DNS_SERVER=0
+fi
+
 if [ "$SUBSPACE_IPV6_NAT_ENABLED" == "0" ] && [ "$SUBSPACE_IPV4_NAT_ENABLED" == "0" ]; then
   echo "One of envionment variables SUBSPACE_IPV6_NAT_ENABLED, SUBSPACE_IPV4_NAT_ENABLED must be set to 1."
   echo "Got SUBSPACE_IPV6_NAT_ENABLED=$SUBSPACE_IPV6_NAT_ENABLED, SUBSPACE_IPV4_NAT_ENABLED=$SUBSPACE_IPV4_NAT_ENABLED"
@@ -184,7 +191,7 @@ wg setconf wg0 /data/wireguard/server.conf
 ip link set wg0 up
 
 # dnsmasq service
-if [[ ${SUBSPACE_DISABLE_DNS} == "0" ]]; then
+if [[ ${SUBSPACE_DISABLE_DNS_SERVER} == "0" ]]; then
   DNSMASQ_LISTEN_ADDRESS="127.0.0.1"
   if [[ ${SUBSPACE_IPV4_NAT_ENABLED} -ne 0 ]]; then
     DNSMASQ_LISTEN_ADDRESS="${DNSMASQ_LISTEN_ADDRESS},${SUBSPACE_IPV4_GW}"
